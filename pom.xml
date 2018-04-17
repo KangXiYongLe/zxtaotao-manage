@@ -1,0 +1,61 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>cn.zxtaotao.parent</groupId>
+    <artifactId>zxtaotao-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <groupId>cn.zxtaotao.manage</groupId>
+  <artifactId>zxtaotao-manage</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <modules>
+  	<module>zxtaotao-manage-pojo</module>
+  	<module>zxtaotao-manage-mapper</module>
+  	<module>zxtaotao-manage-service</module>
+  	<module>zxtaotao-manage-web</module>
+  </modules>
+  <dependencies>
+  	<!-- 对common包的依赖 -->
+  	<dependency>
+  		<groupId>cn.zxtaotao.common</groupId>
+  		<artifactId>zxtaotao-common</artifactId>
+  		<version>1.0.0-SNAPSHOT</version>
+  	</dependency>
+  	<!-- 单元测试 -->
+	<dependency>
+		<groupId>junit</groupId>
+		<artifactId>junit</artifactId>
+		<scope>test</scope>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-log4j12</artifactId>
+	</dependency>
+	
+	<!-- Apache工具组件 -->
+	<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-lang3</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-io</artifactId>
+	</dependency>
+
+  </dependencies>
+  <build>
+	<plugins>
+		<!-- 配置Tomcat插件 -->
+		<plugin>
+			<groupId>org.apache.tomcat.maven</groupId>
+			<artifactId>tomcat7-maven-plugin</artifactId>
+			<configuration>
+				<port>8081</port>
+				<path>/</path>
+			</configuration>
+		</plugin>
+	</plugins>
+	</build>
+</project>

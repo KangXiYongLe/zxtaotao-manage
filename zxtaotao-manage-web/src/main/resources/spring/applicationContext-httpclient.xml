@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+
+	<!-- 定义连接管理器，读取属性文件，创建连接池 -->
+	<bean id="httpClientConnectionManager"
+		class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager">
+		<!-- 设置整个连接池最大连接数 根据自己的场景决定 -->
+		<property name="maxTotal" value="${http.maxTotal}" />
+		<!-- 设置每个主机地址的并发数,针对于我们请求到的某个主机而言 -->
+		<property name="defaultMaxPerRoute" value="${http.defaultMaxPerRoute}" />
+	</bean>
+	
+	<!-- 定期关闭无效连接，创建用于定期关闭无效连接的线程对象，通过构造方法注入连接管理对象 -->
+	<bean class="cn.zxtaotao.common.httpclient.IdleConnectionEvictor">
+		<constructor-arg index="0" ref="httpClientConnectionManager" />
+	</bean>
+
+	<!-- httpclient的构建器，注入连接管理器对象 -->
+	<bean id="httpClientBuilder" class="org.apache.http.impl.client.HttpClientBuilder">
+		<property name="connectionManager" ref="httpClientConnectionManager" />
+	</bean>
+
+	<!-- 定义Httpclient对象，通过工厂方法创建CloseableHttpClient对象 -->
+	<!-- 该对象是多例的 -->
+	<bean class="org.apache.http.impl.client.CloseableHttpClient"
+		factory-bean="httpClientBuilder" factory-method="build" scope="prototype">
+	</bean>
+
+	<!-- 请求参数的构建器，用于封装请求配置信息 -->
+	<bean id="requestConfigBuilder" class="org.apache.http.client.config.RequestConfig.Builder">
+		<!-- 创建连接的最长时间 -->
+		<property name="connectTimeout" value="${http.connectTimeout}" />
+		<!-- 从连接池中获取到连接的最长时间 -->
+		<property name="connectionRequestTimeout" value="${http.connectionRequestTimeout}" />
+		<!-- 数据传输的最长时间 -->
+		<property name="socketTimeout" value="${http.socketTimeout}" />
+		<!-- 提交请求前测试连接是否可用 -->
+		<property name="staleConnectionCheckEnabled" value="${http.staleConnectionCheckEnabled}" />
+	</bean>
+
+	<!-- 定义请求参数对象，通过工厂方法创建RequestConfig对象 -->
+	<bean class="org.apache.http.client.config.RequestConfig"
+		factory-bean="requestConfigBuilder" factory-method="build" />
+
+	
+	
+
+</beans>
